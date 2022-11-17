@@ -15,11 +15,15 @@ import sys, os, arcpy
 arcpy.env.overwriteOutput = True
 
 # Set input variables (Hard-wired)
-inputFolder = '../Data/ARGOSData'
-inputFiles = os.listdir(inputFolder)
+# inputFolder = '../Data/ARGOSData'
+# outputSR = arcpy.SpatialReference(54002)
+# outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
-outputSR = arcpy.SpatialReference(54002)
-outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
+# Set input variables (user input)
+inputFolder = arcpy.GetParameterAsText(0)
+outputSR = arcpy.GetParameterAsText(1)
+outputFC = arcpy.GetParameterAsText(2)
+inputFiles = os.listdir(inputFolder)
 
 ## Prepare a new feature class to which we'll add tracking points
 # Create an empty feature class; requires the path and name as separate parameters
@@ -40,7 +44,7 @@ for inputFile in inputFiles:
     if inputFile == "README.txt": continue
 
     # Give the user a status
-    print(f'Working on file {inputFile}')
+    arcpy.AddMessage(f'Working on file {inputFile}')
     
     # Construct a while loop to iterate through all lines in the datafile
     # Open the ARGOS data file for reading
@@ -103,7 +107,7 @@ for inputFile in inputFiles:
             
             #Handle any error
             except Exception as e:
-                print(f"Error adding record {tagID} to the output: {e}")
+                arcpy.AddWarning(f"Error adding record {tagID} to the output: {e}")
                         
         # Move to the next line so the while loop progresses
         lineString = inputFileObj.readline()
